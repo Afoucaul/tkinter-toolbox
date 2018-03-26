@@ -37,10 +37,9 @@ class Toolbox(tk.Frame):
             button.pack(side=tk.LEFT)
             self.buttons.append(button)
 
-    def _tool_selector(self, n):
-        return lambda: self.select_tool(self.tools[n])
-
     def select_tool(self, tool):
+        """Activate a tool
+        """
         if self.currentTool is not None:
             for event, bindingId in self.target._toolboxBindings:
                 self.target.unbind(event, bindingId)
@@ -64,3 +63,6 @@ class Toolbox(tk.Frame):
         self.currentTool = tool
         self.currentTool.on_enabled()
         self.buttons[self.tools.index(tool)].config(relief=tk.SUNKEN)
+
+    def _tool_selector(self, n):
+        return lambda: self.select_tool(self.tools[n])
