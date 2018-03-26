@@ -24,12 +24,18 @@ class Toolbox(tk.Frame):
         self.target.unbind = unbinder(self.target)
         self.target._toolboxBindings = []
         self.tools = [t(self.target) for t in toolClasses]
+        self.buttons = []
         self.currentTool = None
 
         for i, t in enumerate(self.tools):
             button = tk.Button(
-                self, text=t.text, image=t.icon, command=self._tool_selector(i))
+                self,
+                text=t.text,
+                image=t.icon,
+                command=self._tool_selector(i),
+                relief=tk.RAISED)
             button.pack(side=tk.LEFT)
+            self.buttons.append(button)
 
     def _tool_selector(self, n):
         return lambda: self.select_tool(self.tools[n])
@@ -41,6 +47,12 @@ class Toolbox(tk.Frame):
 
             self.target._toolboxBindings.clear()
             self.currentTool.on_disabled()
+            button = self.buttons[self.tools.index(self.currentTool)]
+            button.config(relief=tk.RAISED)
+
+        if tool == self.currentTool:
+            self.currentTool = None
+            return
 
         for member in dir(tool):
             member = getattr(tool, member)
@@ -51,3 +63,4 @@ class Toolbox(tk.Frame):
 
         self.currentTool = tool
         self.currentTool.on_enabled()
+        self.buttons[self.tools.index(tool)].config(relief=tk.SUNKEN)
